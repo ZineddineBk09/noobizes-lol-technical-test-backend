@@ -1,0 +1,8 @@
+version: "3"
+services:
+  api:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      RIOT_API_KEY: your_riot_api_key_here
