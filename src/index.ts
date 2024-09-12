@@ -1,23 +1,27 @@
-import { ApolloServer, gql } from "apollo-server";
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import dotenv from "dotenv";
+import playerTypeDefs from "./graphql/schemas/playerSchema";
+import matchTypeDefs from "./graphql/schemas/matchSchema";
+import playerResolvers from "./graphql/resolvers/playerResolver";
+import matchResolvers from "./graphql/resolvers/matchResolver";
 
-// Define the GraphQL schema
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
+// Load environment variables from .env file
+dotenv.config();
 
-// Define the resolvers
-const resolvers = {
-  Query: {
-    hello: () => "Hello League of Legends!",
-  },
-};
+// Merge schemas and resolvers
+const typeDefs = [playerTypeDefs, matchTypeDefs];
+const resolvers = [playerResolvers, matchResolvers];
 
-// Create Apollo Server
-const server = new ApolloServer({ typeDefs, resolvers });
-
-// Start the server
-server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
+// Initialize Apollo Server
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
 });
+
+// Start server
+const { url } = await startStandaloneServer(server, {
+  listen: { port: 4000 },
+});
+
+console.log(`🚀 Server ready at ${url}`);
